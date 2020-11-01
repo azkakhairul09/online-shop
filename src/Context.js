@@ -32,11 +32,13 @@ export default class DataProvider extends Component {
             if (res.wilayah === "Kota Bekasi") {
                 this.setState ({
                     ongkosKirim: 12000
-                })  
+                }) 
+                localStorage.setItem("ongkosKirim", 12000) 
             } else {
                 this.setState ({
                     ongkosKirim: 24000
                 })
+                localStorage.setItem("ongkosKirim", 24000)
             }
             this.setState ({
                 alamatPenerima: res

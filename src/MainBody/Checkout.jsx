@@ -13,33 +13,40 @@ export default class Checkout extends Component {
     state = {
         coupon: 0,
         userData:{},
-        // jumlah: 0,
-        // product: "",
+        cart: [],
         promo: 0,
         items: [],
-        biayaPengiriman: this.context.ongkosKirim,
+        biayaPengiriman: 0,
         paymentMethod: "QRIS Payment Method"
     }
 
     
 
-    async componentDidMount() {
+    componentDidMount() {
         this.context.getTotal();
         this.context.countTotal();
         this.context.alamatPenerimaFunc();
         this.context.grandTotalFunc();
         this.context.biayaLayanan();
 
+        const dataCart = JSON.parse(localStorage.getItem('dataCart'));
+        if(dataCart !== null){
+            this.setState({cart: dataCart});
+        }
         const userData = localStorage.getItem('userData');
         let decoded = JSON.parse(userData);
 
         this.setState({
-            userData: decoded
+            userData: decoded,
+            biayaPengiriman: localStorage.getItem("ongkosKirim")
         })
+        console.log(localStorage.getItem("ongkosKirim"))
+    }
         
+    async bikinInvoice() {
         let result = []
     
-        const {cart} = this.context
+        const {cart} = this.state
         console.log(cart)
         for await (const item of cart) {
             result.push({
@@ -53,9 +60,7 @@ export default class Checkout extends Component {
             items: result
         })
         console.log(this.state.items)
-    }
-        
-    bikinInvoice = () => {
+
         const userData = localStorage.getItem('userData');
         let decoded = JSON.parse(userData);
 
@@ -72,7 +77,7 @@ export default class Checkout extends Component {
             promo: 0,
             biayaPengiriman: this.state.biayaPengiriman,
             paymentMethod: this.state.paymentMethod,
-            items: this.state.items
+            items: result
         }
 
         Axios.post(urlInvoice, data, {
@@ -182,7 +187,7 @@ export default class Checkout extends Component {
                                         <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
                                             <div className="justify-content-between d-flex" style={{width:"82%", fontSize:"14px"}}>
                                                 <span>Subtotal</span>
-                                                <span value="12000" name="biayaPengiriman"><b>Rp &nbsp; 12.000&nbsp;<i class="fa fa-angle-down"></i></b></span> 
+                                                <CurrencyFormat value={ongkosKirim+total} displayType={'text'} thousandSeparator={true} prefix={'Rp '} renderText={value => <span><b>&nbsp;{value.replace(/,/g, '.')}&nbsp;<i class="fa fa-angle-down"></i></b></span>} />
                                             </div>
                                         </a>
                                         <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
@@ -196,7 +201,6 @@ export default class Checkout extends Component {
                                             <div className="justify-content-between d-flex" style={{width:"80%"}}>
                                                 <span>Total Ongkos Kirim</span>
                                                 <CurrencyFormat value={ongkosKirim} displayType={'text'} thousandSeparator={true} prefix={'Rp '} renderText={value => <span><b>&nbsp;{value.replace(/,/g, '.')}</b></span>} />
-                                                
                                             </div>
                                             <div className="justify-content-between d-flex" style={{width:"80%"}}>
                                                 <span>Harga ({count} Barang)</span>
@@ -257,7 +261,7 @@ export default class Checkout extends Component {
                                     </div>
                                 </div>
                                 <div style={{paddingTop:"1rem"}}>
-                                    <button onClick={()=>this.bikinInvoice()}className="btn btn-primary btn-lg btn-block reg_button"> BAYAR </button>
+                                    <Link to="/" onClick={()=>this.bikinInvoice()}className="btn btn-primary btn-lg btn-block reg_button"> BAYAR </Link>
                                 </div>
                             </fieldset>
                         </div>
