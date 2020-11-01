@@ -8,15 +8,6 @@ import Footer from '../Footer'
 import Header from '../Header'
 import TopMenu from '../TopMenu'
 
-const { cart } = this.context;
-async function addItems() {
-    for (const [item] of cart.entries()) {
-        const items = await item;
-        console.log(items);
-    } 
-    console.log("finish");
-}
-
 export default class Checkout extends Component {
     static contextType = DataContext;
     state = {
@@ -30,7 +21,9 @@ export default class Checkout extends Component {
         paymentMethod: "QRIS Payment Method"
     }
 
-    componentDidMount(){
+    
+
+    async componentDidMount() {
         this.context.getTotal();
         this.context.countTotal();
         this.context.alamatPenerimaFunc();
@@ -43,24 +36,24 @@ export default class Checkout extends Component {
         this.setState({
             userData: decoded
         })
-
-        const { cart } = this.context;
-        cart.forEach(item =>{
-            this.setState ({
-                items: [
-                    {
-                    product: item.productId,
-                    jumlah: item.count
-                    }
-                ]
-            })
-        })
-
-        console.log(this.state.product)
-        addItems();
-    }
-
+        
+        let result = []
     
+        const {cart} = this.context
+        console.log(cart)
+        for await (const item of cart) {
+            result.push({
+                product: item.productId,
+                jumlah: item.count
+            })   
+        }
+        console.log(result)
+
+        this.setState({
+            items: result
+        })
+        console.log(this.state.items)
+    }
         
     bikinInvoice = () => {
         const userData = localStorage.getItem('userData');
@@ -74,8 +67,6 @@ export default class Checkout extends Component {
 
         const urlInvoice =
         "http://localhost:8090/pharmacy-olshop1/tambah_invoice";
-        
-        
 
         const data = {
             promo: 0,
@@ -102,7 +93,7 @@ export default class Checkout extends Component {
 
     render() {
         const {ongkosKirim, cart, total, count, alamatPenerima, grandTotal, admin} = this.context;
-
+        
         if(cart.length === 0){
             return  <div>
                         <TopMenu />
