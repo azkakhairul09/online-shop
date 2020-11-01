@@ -24,6 +24,14 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/> 
+    <link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css"/>
+    <!-- <link rel="stylesheet" href="css/owl-carousel.css"/> -->
+    <script src="js/jquery.min.js"></script>
+    <!-- <script src="js/owl-carousel.js"></script> -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/custom.js"></script>
     <title>React App</title>
   </head>
   <body>
@@ -39,5 +47,19 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <!-- Placed at the end of the document so the pages load faster ============================================= -->
+    <a style="display: none" href="javascript:void(0);" class="scrollTop back-to-top" id="back-to-top">
+      <i class="fa fa-chevron-up"></i>
+    </a>
+    <script>
+      $("document").ready(function () {
+
+          $(".galleryimg").on("click", function () {
+              var src = $(this).attr('src');
+              console.log(src)
+              $(".changeimg").attr('src', src);
+          });
+      });
+    </script>
   </body>
 </html>
